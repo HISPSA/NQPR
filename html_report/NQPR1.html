@@ -1,0 +1,975 @@
+<html>
+
+<head>
+
+	<style></style>
+
+	<script language=javascript>
+
+		function getParameterByName(name) {0
+			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+			var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				results = regex.exec(location.search);
+			return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
+
+		var ou = getParameterByName('ou');
+		var pe = getParameterByName('pe');
+		var arrPe = pe.split('Q');
+		var ype = arrPe[0];
+		var qpe = arrPe[1];
+		var peFcurrLabel, peFQcurrLabel;
+
+		var fQ1 = ('fQ1 ' + ((qpe == 1) ? (ype-1) + '/' + ype.toString().substring(2,4) : (ype + '/' + (parseInt(ype.toString().substring(2,4)) + 1))));
+		var fQ2 = ('fQ2 ' + ((qpe == 1) ? (ype-1) + '/' + ype.toString().substring(2,4) : (ype + '/' + (parseInt(ype.toString().substring(2,4)) + 1))));
+		var fQ3 = ('fQ3 ' + ((qpe == 1) ? (ype-1) + '/' + ype.toString().substring(2,4) : (ype + '/' + (parseInt(ype.toString().substring(2,4)) + 1))));
+		var fQ4 = ('fQ4 ' + ((qpe == 1) ? (ype-1) + '/' + ype.toString().substring(2,4) : (ype + '/' + (parseInt(ype.toString().substring(2,4)) + 1))));
+
+		peFcurrLabel = ((qpe == 1) ? (ype-1) + '/' + ype.toString().substring(2,4) : (ype + '/' + (parseInt(ype.toString().substring(2,4)) + 1)));
+		peFQcurrLabel = ((qpe > 1) ? (qpe-1) : 4);
+
+		if (qpe == 1){
+			var calcQ1 = (parseInt(ype)-1) + 'Q2';
+			var calcQ2 = (parseInt(ype)-1) + 'Q3';
+			var calcQ3 = (parseInt(ype)-1) + 'Q4';
+			var calcQ4 = parseInt(ype) + 'Q1';
+			var MaxQ = 4;
+		} else{
+			var calcQ1 = (ype) + 'Q2';
+			var calcQ2 = (ype) + 'Q3';
+			var calcQ3 = (ype) + 'Q4';
+			var calcQ4 = (parseInt(ype)+1) + 'Q1';
+			var MaxQ = (parseInt(qpe) - 1);
+		}
+
+		var AllQpe = '';
+		var peFprev = ''
+		var peFcurr = ''
+		var yCalc;
+
+		if (qpe == 1){
+			yCalc = (ype-1);
+			for(var qp = 2; qp <= 4; qp++) {
+				AllQpe += yCalc + 'Q' + qp + ';';
+			}
+			AllQpe += (yCalc +1) + 'Q1;';
+		}
+		else{
+			yCalc = ype;
+			for(var qp = 2; qp <= qpe; qp++) {
+				AllQpe += ype + 'Q' + qp + ';';
+			}
+		}
+
+		AllQpe = AllQpe.toString().substring(0,AllQpe.toString().length-1);
+		peFprev = (((qpe == 1) ? (ype-2) : ((ype-1))) + 'April');
+		peFcurr = (((qpe == 1) ? (ype-1) : ((ype-0))) + 'April');
+
+	</script>
+
+</head>
+
+<body>
+
+<table border=0 cellpadding=0 cellspacing=0 style='min-width:75%;' id='tblNQPR'>
+	<tr>
+		<td colspan=12 height=20 style='border:1.0pt solid black; height:15.0pt;width:100%;background-Color:#258B56;color:#ffffff;text-align:left;font-weight:800;padding:2px 0 0 4px;' id='ouTitle'></td>
+	</tr>
+	<tr>
+		<td colspan=1 rowspan=2 height=80 style='border-left:1pt solid black;border-bottom:1pt solid black;text-align:center;height:60.0pt;font-weight:800;padding:4px;'>
+			Programme / <br>
+			Sub-Programme / <br>
+			Performance Indicators
+		</td>
+		<td colspan=1 rowspan=2 style='font-weight:800;border-left:1pt solid black;border-bottom:1pt solid black;text-align:center;padding:4px;' id='peFprev'></td>
+		<td colspan=5 style='border-left:1pt solid black;border-bottom:1pt solid black;font-weight:800;text-align:center;padding:4px;vertical-align:bottom;' id='peFq'></td>
+		<td colspan=5 style='border-left:1pt solid black;border-bottom:1pt solid black;border-right:1.0pt solid black;font-weight:800;text-align:center;padding:4px;vertical-align:bottom;'>Comments</td>
+	</tr>
+	<tr>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			&nbsp;Quarterly Target <br>as per APP
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Quarter Output <br>- Preliminary
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Quarter Output <br>- Validated
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Deviation <br>(Actual)
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Deviation (%)
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Reason for <br>Deviation
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Corrective <br>Action
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Evidence
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
+			Data Source
+		</td>
+		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid black;padding:2px;'>
+			Responsible <br>Senior Manager
+		</td>
+	</tr>
+</table>
+
+
+<table style='display:none;padding:0;border-spacing:0;border:0;' cellpadding=0 cellspacing=0 id='signatureBlock' name='signatureBlock'>
+
+ <tr>
+  <td id='signatory' name='signatory' style='color:#000000;font-size:9pt;height:10px;border-bottom:1px solid #ffffff;border-right:1px solid #ffffff;'>
+	<p>&nbsp;</p>
+	<table class='signatory'>
+		<tr>
+			<td>I, ..............................................................................................................., hereby declare that the non-financial data submitted above for the current quarter is correct and (to the best of my knowledge) provides an accurate overview of the performance for [<span id='orgSigName'></span>].</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><b>Signed by</b>: Head of the Department ............................................................... </td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><b>Date</b> ........../................./................ </td>
+		</tr>
+	</table>
+	<br>
+  </td>
+ </tr>
+ 
+ 
+  <tr style="">
+	<td style=''><p>&nbsp;</p></td>
+ </tr>
+
+  <tr style="display:screen">
+	<td id='endnotes' name='endnotes' style='color:#000000;font-size:9pt;height:10px;border-bottom:1px solid #ffffff;border-right:1px solid #ffffff;'></td>
+ </tr>
+ 
+ </table>
+ 
+<input type="button" value="Export to Excel" id="exceldownloadbutton" name="exceldownloadbutton" onclick="javascript:fnExcelReport()" class="no-print" style="display:screen;width:140px;position:absolute;left:306px;top:65px;">
+
+ <script language=javascript>
+
+	var orgUnit = dhis2.report.organisationUnit;
+
+	var sort_by = function(field, reverse, primer){
+
+	   var key = primer ? 
+		   function(x) {return primer(x[field])} : 
+		   function(x) {return x[field]};
+
+	   reverse = !reverse ? 1 : -1;
+
+	   return function (a, b) {
+		   return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+		 } 
+	}
+
+	document.getElementById('peFprev').innerHTML = (peFcurrLabel + ' Annual Target as <br>per Annual Performance <br>Plan (APP)');
+	document.getElementById('peFq').innerHTML = ('Quarter ' + peFQcurrLabel + ' Progress');
+	document.getElementById('ouTitle').innerHTML = ('DEPARTMENT OF HEALTH: ' + orgUnit.name);
+	document.getElementById('orgSigName').innerText = orgUnit.name;
+
+	var dxRows = GetReportHierarchyStructure();
+	var ArrProgStructure = ('1:"Administration";2:"National Health Insurance, Health Planning and Systems Enablement";3:"HIV / AIDS, TB and Maternal and Child Health";4:"Primary Health Care Services (PHC)";5:"Hospital, Tertiary Health Services and Human Resource Development";6:"Health Regulation and Compliance Management"').split(';');
+
+	for (p = 0; p < ArrProgStructure.length; p++){
+
+		var ArrProg = (ArrProgStructure[p]).split(':');
+		var Tr = document.createElement('tr');
+		var Td = document.createElement('td');
+		Td.setAttribute("colspan",12);
+		Td.setAttribute("style",'font-weight:800;font-size:12px;background-Color:#F0F0F0;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid black;padding:2px;');
+		Td.innerText = ('Programme ' + ArrProg[0] + ': ' + (ArrProg[1]).replace(/"/g,''));
+		Tr.appendChild(Td);
+
+		document.getElementById('tblNQPR').appendChild (Tr);
+
+		CreateRows(dxRows,ArrProg[0]);
+
+		LoadAndWriteAnalyticVals(FYde(dxRows,ArrProg[0]),peFcurr);
+		LoadAndWriteAnalyticVals(QTRde(dxRows,ArrProg[0]),pe);
+		LoadAndWriteAnalyticVals(QTRind(dxRows,ArrProg[0]),pe);
+
+	}
+
+	OutputNumCharVals(dxRows)
+	ResequenceEvidenceTags()
+
+	document.getElementById('signatureBlock').style.display = 'block';
+
+	function ResequenceEvidenceTags(){
+
+		var ArrWithEv = [];
+		var elements = document.getElementsByClassName('evidence');
+		var sEndNotes = '';
+
+		for (var i = 0; i < elements.length; i++){
+			if ( (elements[i].childNodes != undefined) && (elements[i].childNodes.length) ){
+				//console.log(elements[i].childNodes[0]);
+				if ( (elements[i].childNodes[0].getAttribute('file_resource')).length){
+					ArrWithEv.push ( { row: parseInt(elements[i].getAttribute('row')), id: elements[i].id, file_resource: elements[i].childNodes[0].getAttribute('file_resource') } );
+				}
+			}
+		}
+
+		ArrWithEv.sort(sort_by('row', false));
+
+		for (var p = 0; p < ArrWithEv.length; p++){
+			document.getElementById(ArrWithEv[p].id).childNodes[0].innerText = ('[' + (p+1) + ']');
+		}
+
+		for (var p = 0; p < ArrWithEv.length; p++){
+			var Obj = document.getElementById(ArrWithEv[p].id).parentNode.childNodes[0];
+			//sEndNotes += '<tr class="en"><td style="width:11px;" class="ennumber">&nbsp;<a style="color:#000000;" name="endnote_' + ArrWithEv[p].file_resource + '">' + (p+1) + '</a>.&nbsp;</td><td class="entext">' + Obj.innerText + '&nbsp;<i style="color:#1F1F1F;">(<a href="../api/fileResources/' + ArrWithEv[p].file_resource + '">access document</a>)</i></td></tr>';
+			sEndNotes += '<tr class="en"><td style="width:11px;" class="ennumber">&nbsp;<a style="color:#000000;" name="endnote_' + ArrWithEv[p].file_resource + '">' + (p+1) + '</a>.&nbsp;</td><td class="entext">' + Obj.innerText + '&nbsp;<i style="color:#1F1F1F;">(<a href="../api/dataValues/files?de=' + ArrWithEv[p].id + '&ou=' + ou + '&pe=' + pe + '" target="_blank">access document</a>)</i></td></tr>';
+		}
+
+		document.getElementById('endnotes').innerHTML = ('<table><tr><td colspan=2><div style="font-weight:800;font-size:12px;background-Color:#F0F0F0;border:1pt solid black;padding:2px 2px 1px 3px;">Evidence (File Resources):</div></td></tr>' + sEndNotes + '</table>');
+
+	}
+
+	function OutputNumCharVals(dxRows){
+
+		var sDx = '';
+		var valTypes = '';
+		var DxArr = [];
+		var DxArrTypes = [];
+		var DxDataSets = [];
+
+		for (var i = 0; i < dxRows.length; i++){
+			if (dxRows[i].dx){
+				sDx += (dxRows[i].dx + ',')
+			}
+			if (dxRows[i].dxEvidence){
+				sDx += (dxRows[i].dxEvidence + ',')
+			}
+			sDx.replace(',,',',');
+		}
+
+		if (sDx.slice(-1) == ','){
+			sDx = sDx.substring(sDx,sDx.length-1);
+		}
+
+		// PROCESS ELEMENTS
+
+		var apiData = ('../api/dataElements.json?filter=id:in:[' + sDx + ']&fields=id,name,valueType,dataSetElements[dataSet[id]]');
+		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
+
+		//console.log(apiData);
+
+		for (var n = 0; n < jData.dataElements.length; n++){
+			if (valTypes.indexOf(jData.dataElements[n].valueType) < 0){
+				valTypes += (jData.dataElements[n].valueType + ';');
+			}
+			valTypes.replace(';;',';');
+			DxDataSets.push({
+				dx: jData.dataElements[n].id,
+				dataset: jData.dataElements[n].dataSetElements[0].dataSet.id,
+				type: jData.dataElements[n].valueType });
+		}
+
+		DxDataSets.sort(sort_by('dataset', false));
+		valTypes = valTypes.substring(valTypes,valTypes.length-1);
+		DxArrTypes = valTypes.split(';');
+
+		for (var p = 0; p < DxArrTypes.length; p++){
+			DxArr[p] = getDxValueTypes(jData,DxArrTypes[p]);
+			if (DxArrTypes[p] == 'FILE_RESOURCE'){
+				LoadAndWriteFileResourceObjects(DxDataSets,DxArr[p]);
+			} else {
+				LoadAndWriteAnalyticVals(DxArr[p],pe);
+			}
+		}
+
+		// PROCESS INDICATORS
+
+		var sDx = '';
+
+		for (var i = 0; i < dxRows.length; i++){
+			if (dxRows[i].dxDevActual){
+				sDx += (dxRows[i].dxDevActual + ',')
+			}
+			if (dxRows[i].dxDevPerc){
+				sDx += (dxRows[i].dxDevPerc + ',')
+			}
+			sDx.replace(',,',',');
+		}
+
+		sDx = sDx.substring(sDx,sDx.length-1);
+
+		var apiData = ('../api/indicators.json?filter=id:in:[' + sDx + ']&fields=id,name');
+		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
+		var IndDx = '';
+
+		for (var n = 0; n < jData.indicators.length; n++){
+			IndDx += (jData.indicators[n].id + ';');
+		}
+
+		IndDx = IndDx.substring(IndDx,IndDx.length-1);
+
+		LoadAndWriteAnalyticVals(IndDx,pe);
+
+	}
+	
+	function getDxValueTypes(jData,sValType){
+
+		var sDx = '';
+
+		for (i = 0; i < jData.dataElements.length; i++){
+
+			if (jData.dataElements[i].valueType == sValType){
+				sDx += (jData.dataElements[i].id + ';')
+				sDx.replace(';;',';');
+			}
+
+		}
+
+		return sDx.substring(sDx,sDx.length-1);
+
+	}
+
+	function FYde(dxRows,iProg){
+
+		var sDx = '';
+
+		for (i = 0; i < dxRows.length; i++){
+
+			if (parseInt(dxRows[i].group) == parseInt(iProg)){
+
+				if (dxRows[i].dxAnnTarget){
+					sDx += (dxRows[i].dxAnnTarget + ';')
+					sDx.replace(';;',';');
+				}
+
+			}
+
+		}
+
+		return sDx;
+
+	}
+
+	function QTRde(dxRows,iProg){
+
+		var sDx = '';
+
+		for (i = 0; i < dxRows.length; i++){
+
+			if (parseInt(dxRows[i].group) == parseInt(iProg)){
+
+				if (dxRows[i].dxQrtTarget){
+					sDx += (dxRows[i].dxQrtTarget + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxOutputPrel){
+					sDx += (dxRows[i].dxOutputPrel + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxOutputValid){
+					sDx += (dxRows[i].dxOutputValid + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxDevReason){
+					sDx += (dxRows[i].dxDevReason + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxCorrAction){
+					sDx += (dxRows[i].dxCorrAction + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxSourceData){
+					sDx += (dxRows[i].dxSourceData + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxRespMgr){
+					sDx += (dxRows[i].dxRespMgr + ';')
+					sDx.replace(';;',';');
+				}
+
+			}
+		}
+
+		return sDx;
+
+	}
+
+	function QTRind(dxRows,iProg){
+
+		var sDx = '';
+
+		for (i = 0; i < dxRows.length; i++){
+
+			if (parseInt(dxRows[i].group) == parseInt(iProg)){
+
+				if (dxRows[i].dxDevActual){
+					sDx += (dxRows[i].dxDevActual + ';')
+					sDx.replace(';;',';');
+				}
+				if (dxRows[i].dxDevPerc){
+					sDx += (dxRows[i].dxDevPerc + ';')
+					sDx.replace(';;',';');
+				}
+
+			}
+		}
+
+		return sDx;
+
+	}
+
+	function LoadAndWriteDataVals(sDx,sPe){
+
+		if (sDx.length){
+
+			var apiData = ('../api/api/dataValues.json?de=' + sDx + '&pe=' + sPe + '&ou=' + ou + '');
+			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
+
+			if (jData.rows){
+
+				for (i = 0; i < jData.rows.length; i++){
+					if (!isNaN(parseFloat(jData.rows[i][2])) && isFinite(jData.rows[i][2])){
+						document.getElementById(jData.rows[i][0]).style.textAlign = 'right';
+						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? formatNumber(jData.rows[i][2]).replace('.0','') : '');
+						document.getElementById(jData.rows[i][0]).style.padding = '2px 6px 2px 2px';
+					} else {
+						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? jData.rows[i][2] : '');
+					}
+				}
+
+			}
+
+		}
+
+	}
+
+	function LoadAndWriteFileResourceObjects(ArrObj, sDx){
+
+		var ArrDs = [];
+		var sTemp = '';
+		var iEndNoteIncr = 0;
+
+		for (var i = 0; i < ArrObj.length; i++){
+			if (sTemp.indexOf(ArrObj[i].dataset + ';') < 0){
+				sTemp += (ArrObj[i].dataset + ';');
+			}
+		}
+
+		sTemp = sTemp.substring(sTemp,sTemp.length-1);
+		ArrDs = sTemp.split(';');
+
+		var newDxArr = [];
+
+		for (var i = 0; i < ArrDs.length; i++){
+			var ArrTmp = ArrObj.filter(function (el) {
+			  return el.dataset == ArrDs[i] && el.type == 'FILE_RESOURCE';
+			});
+			var sTemp = '';
+			for (var p = 0; p < ArrTmp.length; p++){
+				sTemp += (ArrTmp[p].dx + ';');
+			}
+			sTemp = sTemp.substring(sTemp,sTemp.length-1);
+			newDxArr.push ( { dataset: ArrDs[i], dx: sTemp } );
+		}
+
+		for (var i = 0; i < newDxArr.length; i++){
+
+			var apiData = ('../api/dataValueSets.json?period=' + pe + '&orgUnit=' + ou + '&dataSet=' + newDxArr[i].dataset + '&filter=dataElement:' + newDxArr[i].dx + '');
+			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
+
+			if (jData.dataValues){
+
+				var DxArr = (newDxArr[i].dx).split(';');
+
+				for (var p = 0; p < jData.dataValues.length; p++){
+
+					for (var n = 0; n < DxArr.length; n++){
+
+						if (jData.dataValues[p]['dataElement'] == DxArr[n]){
+
+							iEndNoteIncr += 1;
+
+							document.getElementById(jData.dataValues[p]['dataElement']).style.textAlign = 'center';
+							document.getElementById(jData.dataValues[p]['dataElement']).style.padding = '2px 6px 2px 2px';
+
+							var EndNote = document.createElement('a');
+							EndNote.setAttribute("width", 20);
+							EndNote.setAttribute("height", 10);		
+							EndNote.width = 20;
+							EndNote.height = 10;
+							EndNote.setAttribute("style", "font-size:11px;font-weight:200;opacity:1;cursor:hand;cursor:pointer;");
+							EndNote.setAttribute("fill", "#0048FF");
+							EndNote.setAttribute("title", (DxArr[n] + ': ' + jData.dataValues[p]['value']));
+							EndNote.setAttribute("href", "#endnote_" + jData.dataValues[p]['value']);
+							EndNote.setAttribute("file_resource", jData.dataValues[p]['value']);
+							EndNote.textContent = (((jData.dataValues[p]['value']).length) ? 'Y' : '');
+
+							document.getElementById(jData.dataValues[p]['dataElement']).appendChild(EndNote);
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	function LoadAndWriteAnalyticVals(sDx,sPe){
+
+		if (sDx.length){
+
+			var apiData = ('../api/analytics.json?dimension=dx:' + sDx + '&filter=pe:' + sPe + '&dimension=ou:' + ou + '&displayProperty=NAME&outputIdScheme=UID');
+			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
+
+			if (jData.rows){
+
+				for (i = 0; i < jData.rows.length; i++){
+					if (!isNaN(parseFloat(jData.rows[i][2])) && isFinite(jData.rows[i][2])){
+						document.getElementById(jData.rows[i][0]).style.textAlign = 'right';
+						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? formatNumber(jData.rows[i][2]).replace('.0','') : '');
+						document.getElementById(jData.rows[i][0]).style.padding = '2px 6px 2px 2px';
+					} else {
+						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? jData.rows[i][2] : '');
+					}
+				}
+
+			}
+
+		}
+
+	}
+
+	function CreateRows(dxRows,iProg){
+	
+		var Tb = document.createElement('tbody');
+
+		for (i = 0; i < dxRows.length; i++){
+
+			if (parseInt(dxRows[i].group) == parseInt(iProg)){
+
+				var Tr = document.createElement('tr');
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dx);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px 3px 3px 6px;max-width:125px;');
+				Td.innerText = dxRows[i].name;
+				Tr.appendChild(Td);
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxAnnTarget);
+				Td.setAttribute("title",dxRows[i].dxAnnTarget);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* APP Target */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxQrtTarget);
+				Td.setAttribute("title",dxRows[i].dxQrtTarget);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Prelim Output */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxOutputPrel);
+				Td.setAttribute("title",dxRows[i].dxOutputPrel);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Valid Output */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxOutputValid);
+				Td.setAttribute("title",dxRows[i].dxOutputValid);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Actual Dev */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxDevActual);
+				Td.setAttribute("title",dxRows[i].dxDevActual);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:70px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Dev % */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxDevPerc);
+				Td.setAttribute("title",dxRows[i].dxDevPerc);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:70px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+
+				/* Dev Reason */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxDevReason);
+				Td.setAttribute("title",dxRows[i].dxDevReason);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Correct Action */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxCorrAction);
+				Td.setAttribute("title",dxRows[i].dxCorrAction);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:115px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Evidence */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxEvidence);
+				Td.setAttribute("title",dxRows[i].dxEvidence);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:70px;');
+				Td.innerHTML = ''; //&nbsp;
+				Td.setAttribute("row",(i+1));
+				Td.setAttribute("class",'evidence');
+				Tr.appendChild(Td);
+
+				/* Data Source */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxSourceData);
+				Td.setAttribute("title",dxRows[i].dxSourceData);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:70px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				/* Resp Mgr */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxRespMgr);
+				Td.setAttribute("title",dxRows[i].dxRespMgr);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid black;padding:3px;max-width:145px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
+				document.getElementById('tblNQPR').appendChild (Tr);
+
+			}
+
+		}
+
+	}
+
+	function GetReportHierarchyStructure(){
+
+		var deObjH = ReturnDEobjects()
+		var indObjH = ReturnINDobjects()
+		var dxObjH = MergeObjectStruture(deObjH,indObjH)
+
+		return dxObjH;
+
+	}
+
+	function MergeObjectStruture(objDE, objIND){
+
+		var myReturn = [];
+
+		for(var i = 0; i < objDE.length; i++) {
+			myReturn.push ( objDE[i] );
+		}
+
+		for(var i = 0; i < objIND.length; i++) {
+			myReturn.push ( objIND[i] );
+		}
+
+		myReturn.sort(sort_by('combined_sort_order', false));
+
+		return myReturn;
+
+	}
+
+	function ReturnDEobjects(){
+
+		var apiCall = '../api/dataElements.json?fields=id,name,description,valueType,attributeValues[value,attribute[name]&pageSize=20000';
+		var jData = JSON.parse($.ajax({url:apiCall, async: false}).responseText);
+		var Jreturn = [];
+
+		for(var i = 0; i < jData.dataElements.length; i++) {
+
+			var sOd = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Sort_Order','');
+			var dxAnnTarget = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Annual_Target','');
+			var dxQrtTarget = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Quarterly_Target','');
+			var dxOutputPrel = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Prelim','');
+			var dxOutputValid = jData.dataElements[i].id; //returnAttributeValue(jData.dataElements[i].attributeValues,'','');
+			var dxDevActual = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Dev_Actual','');
+			var dxDevPerc = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Dev_Percent','');
+
+			var dxDevReason = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Reason_Dev','');
+			var dxCorrAction = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Corrective_Act','');
+			var dxEvidence = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Evidence','');
+			var dxSourceData = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Source_Data','');
+			var dxRespMgr = returnAttributeValue(jData.dataElements[i].attributeValues,'NQPR_Resp_SNR_Man','');
+
+			var iGrp = 0, iSrt = 0;
+
+			if (sOd.length){
+				var ArrGrSrt = sOd.split(';');
+				iGrp = ArrGrSrt[0];
+				iSrt = ArrGrSrt[1];
+			}
+			
+			if ( (iGrp > 0) || (iSrt > 0) ){
+			
+				Jreturn.push({
+					group: iGrp,
+					order: iSrt,
+					dx: jData.dataElements[i].id,
+					name: jData.dataElements[i].name,
+					description: jData.dataElements[i].description,
+					type: 'de',
+					growthsentiment: 0,
+					combined_sort_order: iGrp + ';' + iSrt,
+					dxAnnTarget:	dxAnnTarget,
+					valAnnTarget:	'',
+					dxQrtTarget:	dxQrtTarget,
+					valQrtTarget:	'',
+					dxOutputPrel:	dxOutputPrel,
+					valOutputPrelim: '',
+					dxOutputValid: 	dxOutputValid,
+					valOutputValid: '',
+					dxDevActual:	dxDevActual,
+					valDevActual: '',
+					dxDevPerc: 		dxDevPerc,
+					valDevPerc:		'',
+					dxDevReason:	dxDevReason,
+					valDevReason:	'',
+					dxCorrAction:	dxCorrAction,
+					valCorrAction:	'',
+					dxEvidence:		dxEvidence,
+					valEvidence:		'',
+					dxSourceData:	dxSourceData,
+					valSourceData:	'',
+					dxRespMgr:		dxRespMgr,
+					valRespMgr:		'',
+					q1: 			calcQ1,
+					q1_fq: 			fQ1,
+					q1_plan: 		'',
+					q1_plancomment:	'',
+					q1_prelim: 		'',
+					q1_actual: 		'',
+					q2: 			calcQ2,
+					q2_fq: 			fQ2,
+					q2_plan: 		'',
+					q2_plancomment:	'',
+					q2_prelim: 		'',
+					q2_actual: 		'',
+					q3: 			calcQ3,
+					q3_fq: 			fQ3,
+					q3_plan: 		'',
+					q3_plancomment:	'',
+					q3_prelim: 		'',
+					q3_actual: 		'',
+					q4: 			calcQ4,
+					q4_fq: 			fQ4,
+					q4_plan: 		'',
+					q4_plancomment:	'',
+					q4_prelim: 		'',
+					q4_actual: 		'',
+					app_final_output: 	'',
+					comments:		'',
+					dxType:			jData.dataElements[i].valueType
+				});
+
+			}
+		}
+		
+		return Jreturn;
+
+	}
+
+	function ReturnINDobjects(){
+
+		var apiCall = '../api/indicators.json?fields=id,name,description,numerator,denominator,indicatorType[name],attributeValues[value,attribute[name]]&pageSize=20000';
+		var jData = JSON.parse($.ajax({url:apiCall, async: false}).responseText);
+		var Jreturn = [];
+
+		for(var i = 0; i < jData.indicators.length; i++) {
+
+			var sOd = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Sort_Order','');
+			var dxAnnTarget = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Annual_Target','');
+			var dxQrtTarget = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Quarterly_Target','');
+			var dxOutputPrel = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Prelim','');
+			var dxOutputValid = jData.indicators[i].id; //returnAttributeValue(jData.indicators[i].attributeValues,'','');
+			var dxDevActual = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Dev_Actual','');
+			var dxDevPerc = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Dev_Percent','');
+
+			var dxDevReason = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Reason_Dev','');
+			var dxCorrAction = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Corrective_Act','');
+			var dxEvidence = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Evidence','');
+			var dxSourceData = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Source_Data','');
+			var dxRespMgr = returnAttributeValue(jData.indicators[i].attributeValues,'NQPR_Resp_SNR_Man','');
+
+			var iGrp = 0, iSrt = 0;
+
+			if (sOd.length){
+				var ArrGrSrt = sOd.split(';');
+				iGrp = ArrGrSrt[0];
+				iSrt = ArrGrSrt[1];
+			}
+			
+			if ( (iGrp > 0) || (iSrt > 0) ){
+
+				Jreturn.push({
+					group: iGrp,
+					order: iSrt,
+					dx: jData.indicators[i].id,
+					name: jData.indicators[i].name,
+					description: jData.indicators[i].description,
+					type: 'ind',
+					growthsentiment: 0,
+					combined_sort_order: iGrp + ';' + iSrt,
+					dxAnnTarget:	dxAnnTarget,
+					valAnnTarget:	'',
+					dxQrtTarget:	dxQrtTarget,
+					valQrtTarget:	'',
+					dxOutputPrel:	dxOutputPrel,
+					valOutputPrelim: '',
+					dxOutputValid: 	dxOutputValid,
+					valOutputValid: '',
+					dxDevActual:	dxDevActual,
+					valDevActual: '',
+					dxDevPerc: 		dxDevPerc,
+					valDevPerc:		'',
+					dxDevReason:	dxDevReason,
+					valDevReason:	'',
+					dxCorrAction:	dxCorrAction,
+					valCorrAction:	'',
+					dxEvidence:		dxEvidence,
+					valEvidence:		'',
+					dxSourceData:	dxSourceData,
+					valSourceData:	'',
+					dxRespMgr:		dxRespMgr,
+					valRespMgr:		'',
+					q1: 			calcQ1,
+					q1_fq: 			fQ1,
+					q1_plan: 		'',
+					q1_plancomment:	'',
+					q1_prelim: 		'',
+					q1_actual: 		'',
+					q2: 			calcQ2,
+					q2_fq: 			fQ2,
+					q2_plan: 		'',
+					q2_plancomment:	'',
+					q2_prelim: 		'',
+					q2_actual: 		'',
+					q3: 			calcQ3,
+					q3_fq: 			fQ3,
+					q3_plan: 		'',
+					q3_plancomment:	'',
+					q3_prelim: 		'',
+					q3_actual: 		'',
+					q4: 			calcQ4,
+					q4_fq: 			fQ4,
+					q4_plan: 		'',
+					q4_plancomment:	'',
+					q4_prelim: 		'',
+					q4_actual: 		'',
+					app_final_output: 	'',
+					comments:		'',
+					dxType:			jData.indicators[i].indicatorType.name
+				});
+
+			}
+		}
+
+		return Jreturn;
+	}
+
+	function returnAttributeValue(Arr,sName,ReturnDefault){
+		var sReturn = '';
+
+		for(var i = 0; i < Arr.length; i++) {
+			if (Arr[i].attribute.name == sName){
+				sReturn = Arr[i].value;
+			}
+		}
+		if (sReturn.length == 0){
+			return ReturnDefault
+		}
+		else{
+			return sReturn
+		}
+
+	}
+
+	function formatNumber(num) {
+		return ("" + num).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, function($1) { return $1 + "," });
+	}
+
+	function fnExcelReport(){
+
+		var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+		var textRange; var j=0;
+		tab = document.getElementById('tblNQPR'); // id of table
+
+		for(j = 0 ; j < tab.rows.length ; j++) {     
+			tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+			//tab_text=tab_text+"</tr>";
+		}
+
+		tab_text=tab_text+"</table>";
+		tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+		tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+		tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+		var ua = window.navigator.userAgent;
+		var msie = ua.indexOf("MSIE "); 
+
+		//link.download = "QPR_HEALTH_" + document.getElementById('ouTitle').innerHTML + "_" + (document.getElementById('peFprev').innerHTML).replace('/','_') + "_fQ" + (document.getElementById('peFq').innerHTML).substring(0,1) + ".xls";
+		if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {     // If Internet Explorer
+			txtArea1.document.open("txt/html","replace");
+			txtArea1.document.write(tab_text);
+			txtArea1.document.close();
+			txtArea1.focus(); 
+			sa=txtArea1.document.execCommand("SaveAs",true,"Say Thanks to Sumit.xls");
+		} else {                //other browser not tested on IE 11
+			sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text)); 
+		}
+
+		return (sa);
+	}
+
+</script>
+
+</body>
+</html>
