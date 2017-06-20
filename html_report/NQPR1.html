@@ -444,7 +444,11 @@
 						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? formatNumber(jData.rows[i][2]).replace('.0','') : '');
 						document.getElementById(jData.rows[i][0]).style.padding = '2px 6px 2px 2px';
 					} else {
-						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? jData.rows[i][2] : '');
+						if ( !isNaN(jData.rows[i][2]) ){
+							document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? jData.rows[i][2] : '');
+						} else {
+							document.getElementById(jData.rows[i][0]).innerText = jData.rows[i][2];
+						}
 					}
 				}
 
@@ -544,7 +548,7 @@
 						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? formatNumber(jData.rows[i][2]).replace('.0','') : '');
 						document.getElementById(jData.rows[i][0]).style.padding = '2px 6px 2px 2px';
 					} else {
-						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? jData.rows[i][2] : '');
+						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2] != 'NaN') ? jData.rows[i][2] : '');
 					}
 				}
 
