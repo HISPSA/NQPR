@@ -183,6 +183,7 @@
 
 	var dxRows = GetReportHierarchyStructure();
 	var ArrProgStructure = ('1:"Administration";2:"National Health Insurance, Health Planning and Systems Enablement";3:"HIV / AIDS, TB and Maternal and Child Health";4:"Primary Health Care Services (PHC)";5:"Hospital, Tertiary Health Services and Human Resource Development";6:"Health Regulation and Compliance Management"').split(';');
+	//console.log(dxRows);
 
 	for (p = 0; p < ArrProgStructure.length; p++){
 
@@ -266,8 +267,7 @@
 
 		var apiData = ('../api/dataElements.json?filter=id:in:[' + sDx + ']&fields=id,name,valueType,dataSetElements[dataSet[id]]');
 		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
-
-		//console.log(apiData);
+		//console.log('apiDataDE: ' + apiData);
 
 		for (var n = 0; n < jData.dataElements.length; n++){
 			if (valTypes.indexOf(jData.dataElements[n].valueType) < 0){
@@ -281,6 +281,7 @@
 		}
 
 		DxDataSets.sort(sort_by('dataset', false));
+		//console.log(DxDataSets);
 		valTypes = valTypes.substring(valTypes,valTypes.length-1);
 		DxArrTypes = valTypes.split(';');
 
@@ -312,6 +313,7 @@
 		var apiData = ('../api/indicators.json?filter=id:in:[' + sDx + ']&fields=id,name');
 		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
 		var IndDx = '';
+		//console.log('apiDataID: ' + apiData);
 
 		for (var n = 0; n < jData.indicators.length; n++){
 			IndDx += (jData.indicators[n].id + ';');
@@ -539,7 +541,7 @@
 
 			var apiData = ('../api/analytics.json?dimension=dx:' + sDx + '&filter=pe:' + sPe + '&dimension=ou:' + ou + '&displayProperty=NAME&outputIdScheme=UID');
 			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
-
+			//console.log(apiData);
 			if (jData.rows){
 
 				for (i = 0; i < jData.rows.length; i++){
@@ -570,7 +572,8 @@
 
 				var Td = document.createElement('td');
 				Td.setAttribute("colspan",1);
-				Td.setAttribute("id",dxRows[i].dx);
+				Td.setAttribute("id","dx_" + dxRows[i].dx);
+				Td.setAttribute("name",dxRows[i].name);
 				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px 3px 3px 6px;max-width:125px;');
 				Td.innerText = dxRows[i].name;
 				Tr.appendChild(Td);
