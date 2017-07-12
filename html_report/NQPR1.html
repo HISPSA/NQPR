@@ -183,7 +183,6 @@
 
 	var dxRows = GetReportHierarchyStructure();
 	var ArrProgStructure = ('1:"Administration";2:"National Health Insurance, Health Planning and Systems Enablement";3:"HIV / AIDS, TB and Maternal and Child Health";4:"Primary Health Care Services (PHC)";5:"Hospital, Tertiary Health Services and Human Resource Development";6:"Health Regulation and Compliance Management"').split(';');
-	//console.log(dxRows);
 
 	for (p = 0; p < ArrProgStructure.length; p++){
 
@@ -218,9 +217,8 @@
 
 		for (var i = 0; i < elements.length; i++){
 			if ( (elements[i].childNodes != undefined) && (elements[i].childNodes.length) ){
-				//console.log(elements[i].childNodes[0]);
 				if ( (elements[i].childNodes[0].getAttribute('file_resource')).length){
-					ArrWithEv.push ( { row: parseInt(elements[i].getAttribute('row')), id: elements[i].id, file_resource: elements[i].childNodes[0].getAttribute('file_resource') } );
+					ArrWithEv.push ( { row: parseInt(elements[i].getAttribute('row')), id: elements[i].id, file_resource: elements[i].childNodes[0].getAttribute('file_resource'), ou: elements[i].childNodes[0].getAttribute('file_ou') } );
 				}
 			}
 		}
@@ -234,7 +232,7 @@
 		for (var p = 0; p < ArrWithEv.length; p++){
 			var Obj = document.getElementById(ArrWithEv[p].id).parentNode.childNodes[0];
 			//sEndNotes += '<tr class="en"><td style="width:11px;" class="ennumber">&nbsp;<a style="color:#000000;" name="endnote_' + ArrWithEv[p].file_resource + '">' + (p+1) + '</a>.&nbsp;</td><td class="entext">' + Obj.innerText + '&nbsp;<i style="color:#1F1F1F;">(<a href="../api/fileResources/' + ArrWithEv[p].file_resource + '">access document</a>)</i></td></tr>';
-			sEndNotes += '<tr class="en"><td style="width:11px;" class="ennumber">&nbsp;<a style="color:#000000;" name="endnote_' + ArrWithEv[p].file_resource + '">' + (p+1) + '</a>.&nbsp;</td><td class="entext">' + Obj.innerText + '&nbsp;<i style="color:#1F1F1F;">(<a href="../api/dataValues/files?de=' + ArrWithEv[p].id + '&ou=' + ou + '&pe=' + pe + '" target="_blank">access document</a>)</i></td></tr>';
+			sEndNotes += '<tr class="en"><td style="width:11px;" class="ennumber">&nbsp;<a style="color:#000000;" name="endnote_' + ArrWithEv[p].file_resource + '">' + (p+1) + '</a>.&nbsp;</td><td class="entext">' + Obj.innerText + '&nbsp;<i style="color:#1F1F1F;">(<a href="../api/dataValues/files?de=' + ArrWithEv[p].id + '&ou=' + ArrWithEv[p].ou + '&pe=' + pe + '" target="_blank">access document</a>)</i></td></tr>';
 		}
 
 		document.getElementById('endnotes').innerHTML = ('<table><tr><td colspan=2><div style="font-weight:800;font-size:12px;background-Color:#F0F0F0;border:1pt solid black;padding:2px 2px 1px 3px;">Evidence (File Resources):</div></td></tr>' + sEndNotes + '</table>');
@@ -248,6 +246,7 @@
 		var DxArr = [];
 		var DxArrTypes = [];
 		var DxDataSets = [];
+		var OUlookup = '';
 
 		for (var i = 0; i < dxRows.length; i++){
 			if (dxRows[i].dx){
@@ -265,23 +264,25 @@
 
 		// PROCESS ELEMENTS
 
-		var apiData = ('../api/dataElements.json?filter=id:in:[' + sDx + ']&fields=id,name,valueType,dataSetElements[dataSet[id]]');
+		var apiData = ('../api/dataElements.json?filter=id:in:[' + sDx + ']&fields=id,name,valueType,dataSetElements[dataSet[id]],attributeValues[value,attribute[name]');
 		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
-		//console.log('apiDataDE: ' + apiData);
+		var ouId = '';
 
 		for (var n = 0; n < jData.dataElements.length; n++){
+			ouId = returnAttributeValue(jData.dataElements[n].attributeValues,'NQPR_EvidenceToOrgunit','');
 			if (valTypes.indexOf(jData.dataElements[n].valueType) < 0){
 				valTypes += (jData.dataElements[n].valueType + ';');
 			}
 			valTypes.replace(';;',';');
 			DxDataSets.push({
-				dx: jData.dataElements[n].id,
+				dx: 	jData.dataElements[n].id,
 				dataset: jData.dataElements[n].dataSetElements[0].dataSet.id,
-				type: jData.dataElements[n].valueType });
+				type: 	jData.dataElements[n].valueType,
+				ou:		((ouId != '') ? ouId : ou)
+			});
 		}
 
 		DxDataSets.sort(sort_by('dataset', false));
-		//console.log(DxDataSets);
 		valTypes = valTypes.substring(valTypes,valTypes.length-1);
 		DxArrTypes = valTypes.split(';');
 
@@ -313,7 +314,6 @@
 		var apiData = ('../api/indicators.json?filter=id:in:[' + sDx + ']&fields=id,name');
 		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
 		var IndDx = '';
-		//console.log('apiDataID: ' + apiData);
 
 		for (var n = 0; n < jData.indicators.length; n++){
 			IndDx += (jData.indicators[n].id + ';');
@@ -468,7 +468,7 @@
 
 		for (var i = 0; i < ArrObj.length; i++){
 			if (sTemp.indexOf(ArrObj[i].dataset + ';') < 0){
-				sTemp += (ArrObj[i].dataset + ';');
+				sTemp += (ArrObj[i].dataset  + ':' + ArrObj[i].ou  + ';');
 			}
 		}
 
@@ -479,19 +479,19 @@
 
 		for (var i = 0; i < ArrDs.length; i++){
 			var ArrTmp = ArrObj.filter(function (el) {
-			  return el.dataset == ArrDs[i] && el.type == 'FILE_RESOURCE';
+			  return el.dataset == (ArrDs[i]).split(':')[0] && el.type == 'FILE_RESOURCE';
 			});
 			var sTemp = '';
 			for (var p = 0; p < ArrTmp.length; p++){
 				sTemp += (ArrTmp[p].dx + ';');
 			}
 			sTemp = sTemp.substring(sTemp,sTemp.length-1);
-			newDxArr.push ( { dataset: ArrDs[i], dx: sTemp } );
+			newDxArr.push ( { dataset: (ArrDs[i]).split(':')[0], dx: sTemp.split(':')[0], ou: (ArrDs[i]).split(':')[1] } );
 		}
 
 		for (var i = 0; i < newDxArr.length; i++){
 
-			var apiData = ('../api/dataValueSets.json?period=' + pe + '&orgUnit=' + ou + '&dataSet=' + newDxArr[i].dataset + '&filter=dataElement:' + newDxArr[i].dx + '');
+			var apiData = ('../api/dataValueSets.json?period=' + pe + '&orgUnit=' + newDxArr[i].ou + '&dataSet=' + newDxArr[i].dataset + '&filter=dataElement:' + newDxArr[i].dx + '');
 			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
 
 			if (jData.dataValues){
@@ -519,7 +519,8 @@
 							EndNote.setAttribute("title", (DxArr[n] + ': ' + jData.dataValues[p]['value']));
 							EndNote.setAttribute("href", "#endnote_" + jData.dataValues[p]['value']);
 							EndNote.setAttribute("file_resource", jData.dataValues[p]['value']);
-							EndNote.textContent = (((jData.dataValues[p]['value']).length) ? 'Y' : '');
+							EndNote.setAttribute("file_ou", newDxArr[i].ou);
+							EndNote.textContent = ''; //(((jData.dataValues[p]['value']).length) ? '1' : '');
 
 							document.getElementById(jData.dataValues[p]['dataElement']).appendChild(EndNote);
 
@@ -541,7 +542,7 @@
 
 			var apiData = ('../api/analytics.json?dimension=dx:' + sDx + '&filter=pe:' + sPe + '&dimension=ou:' + ou + '&displayProperty=NAME&outputIdScheme=UID');
 			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
-			//console.log(apiData);
+
 			if (jData.rows){
 
 				for (i = 0; i < jData.rows.length; i++){
@@ -675,7 +676,7 @@
 				Td.setAttribute("colspan",1);
 				Td.setAttribute("id",dxRows[i].dxSourceData);
 				Td.setAttribute("title",dxRows[i].dxSourceData);
-				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:70px;');
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:70px;word-wrap: break-word;');
 				Td.innerHTML = '&nbsp;';
 				Tr.appendChild(Td);
 
