@@ -13,7 +13,7 @@
 			return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
 
-		var ou = getParameterByName('ou');
+		var ouLevel = 0, ou = getParameterByName('ou');
 		var pe = getParameterByName('pe');
 		var arrPe = pe.split('Q');
 		var ype = arrPe[0];
@@ -162,6 +162,7 @@
  <script language=javascript>
 
 	var orgUnit = dhis2.report.organisationUnit;
+	var ProgStructure = '1:"Administration";2:"National Health Insurance, Health Planning and Systems Enablement";3:"HIV / AIDS, TB and Maternal and Child Health";4:"Primary Health Care Services (PHC)";5:"Hospital, Tertiary Health Services and Human Resource Development";6:"Health Regulation and Compliance Management"';
 
 	var sort_by = function(field, reverse, primer){
 
@@ -181,33 +182,57 @@
 	document.getElementById('ouTitle').innerHTML = ('DEPARTMENT OF HEALTH: ' + orgUnit.name);
 	document.getElementById('orgSigName').innerText = orgUnit.name;
 
-	var dxRows = GetReportHierarchyStructure();
-	var ArrProgStructure = ('1:"Administration";2:"National Health Insurance, Health Planning and Systems Enablement";3:"HIV / AIDS, TB and Maternal and Child Health";4:"Primary Health Care Services (PHC)";5:"Hospital, Tertiary Health Services and Human Resource Development";6:"Health Regulation and Compliance Management"').split(';');
 
-	for (p = 0; p < ArrProgStructure.length; p++){
+	//URL for user-OU 
+	var sOU = ('../api/organisationUnits/' + ou + '.json?fields=id,name,level,code,parent,level,attributeValues[value,attribute[name]]'); //id,name,level,code,parent,level
 
-		var ArrProg = (ArrProgStructure[p]).split(':');
-		var Tr = document.createElement('tr');
-		var Td = document.createElement('td');
-		Td.setAttribute("colspan",12);
-		Td.setAttribute("style",'font-weight:800;font-size:12px;background-Color:#F0F0F0;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid black;padding:2px;');
-		Td.innerText = ('Programme ' + ArrProg[0] + ': ' + (ArrProg[1]).replace(/"/g,''));
-		Tr.appendChild(Td);
+	 $.ajax({
+		url: sOU,
+		error: function (xhr, ajaxOptions, thrownError) {
+			console.log('error: OrgUnit Lookup');
+		},
+		success : function(dataOU){
 
-		document.getElementById('tblNQPR').appendChild (Tr);
+			ouLevel = dataOU.level;
 
-		CreateRows(dxRows,ArrProg[0]);
+			var dxRows = GetReportHierarchyStructure();
 
-		LoadAndWriteAnalyticVals(FYde(dxRows,ArrProg[0]),peFcurr);
-		LoadAndWriteAnalyticVals(QTRde(dxRows,ArrProg[0]),pe);
-		LoadAndWriteAnalyticVals(QTRind(dxRows,ArrProg[0]),pe);
+			for (var i = 0; i < dataOU.attributeValues.length; i++){
+				if (dataOU.attributeValues[i].attribute.name == 'OrgUnitProgStructure'){
+					ProgStructure = dataOU.attributeValues[i].value;
+					break;
+				}
+			}
 
-	}
+			var ArrProgStructure = (ProgStructure).split(';');
 
-	OutputNumCharVals(dxRows)
-	ResequenceEvidenceTags()
+			for (p = 0; p < ArrProgStructure.length; p++){
 
-	document.getElementById('signatureBlock').style.display = 'block';
+				var ArrProg = (ArrProgStructure[p]).split(':');
+				var Tr = document.createElement('tr');
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",12);
+				Td.setAttribute("style",'font-weight:800;font-size:12px;background-Color:#F0F0F0;border-left:1pt solid black;border-bottom:1pt solid black;border-right:1pt solid black;padding:2px;');
+				Td.innerText = ('Programme ' + ArrProg[0] + ': ' + (ArrProg[1]).replace(/"/g,''));
+				Tr.appendChild(Td);
+
+				document.getElementById('tblNQPR').appendChild (Tr);
+
+				CreateRows(dxRows,ArrProg[0]);
+
+				LoadAndWriteAnalyticVals(FYde(dxRows,ArrProg[0]),peFcurr);
+				LoadAndWriteAnalyticVals(QTRde(dxRows,ArrProg[0]),pe);
+				LoadAndWriteAnalyticVals(QTRind(dxRows,ArrProg[0]),pe);
+
+			}
+
+			OutputNumCharVals(dxRows)
+			ResequenceEvidenceTags()
+
+			document.getElementById('signatureBlock').style.display = 'block';
+			
+		}
+	});
 
 	function ResequenceEvidenceTags(){
 
@@ -264,12 +289,14 @@
 
 		// PROCESS ELEMENTS
 
-		var apiData = ('../api/dataElements.json?filter=id:in:[' + sDx + ']&fields=id,name,valueType,dataSetElements[dataSet[id]],attributeValues[value,attribute[name]');
+		var apiData = ('../api/dataElements.json?filter=id:in:[' + sDx + ']&fields=id,name,valueType,dataSetElements[dataSet[id]],attributeValues[value,attribute[name]&pageSize=20000');
 		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
 		var ouId = '';
 
+		console.log(apiData);
+
 		for (var n = 0; n < jData.dataElements.length; n++){
-			ouId = returnAttributeValue(jData.dataElements[n].attributeValues,'NQPR_EvidenceToOrgunit','');
+			ouId = ( (parseInt(ouLevel) < 3) ? returnAttributeValue(jData.dataElements[n].attributeValues,'NQPR_EvidenceToOrgunit','') : ou);
 			if (valTypes.indexOf(jData.dataElements[n].valueType) < 0){
 				valTypes += (jData.dataElements[n].valueType + ';');
 			}
@@ -311,7 +338,7 @@
 
 		sDx = sDx.substring(sDx,sDx.length-1);
 
-		var apiData = ('../api/indicators.json?filter=id:in:[' + sDx + ']&fields=id,name');
+		var apiData = ('../api/indicators.json?filter=id:in:[' + sDx + ']&fields=id,name&pageSize=20000');
 		var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
 		var IndDx = '';
 
@@ -467,7 +494,7 @@
 		var iEndNoteIncr = 0;
 
 		for (var i = 0; i < ArrObj.length; i++){
-			if (sTemp.indexOf(ArrObj[i].dataset + ';') < 0){
+			if ( (sTemp.indexOf((ArrObj[i].dataset  + ':' + ArrObj[i].ou  + ';')) < 0) && (ArrObj[i].type == 'FILE_RESOURCE') ) {
 				sTemp += (ArrObj[i].dataset  + ':' + ArrObj[i].ou  + ';');
 			}
 		}
@@ -479,20 +506,22 @@
 
 		for (var i = 0; i < ArrDs.length; i++){
 			var ArrTmp = ArrObj.filter(function (el) {
-			  return el.dataset == (ArrDs[i]).split(':')[0] && el.type == 'FILE_RESOURCE';
+			  return el.dataset == (ArrDs[i]).split(':')[0] && el.ou == (ArrDs[i]).split(':')[1];
 			});
 			var sTemp = '';
 			for (var p = 0; p < ArrTmp.length; p++){
 				sTemp += (ArrTmp[p].dx + ';');
 			}
 			sTemp = sTemp.substring(sTemp,sTemp.length-1);
-			newDxArr.push ( { dataset: (ArrDs[i]).split(':')[0], dx: sTemp.split(':')[0], ou: (ArrDs[i]).split(':')[1] } );
+			newDxArr.push ( { dataset: (ArrDs[i]).split(':')[0], dx: sTemp.split(':')[0], ou: (ArrDs[i]).split(':')[1] } ); 
 		}
 
 		for (var i = 0; i < newDxArr.length; i++){
 
 			var apiData = ('../api/dataValueSets.json?period=' + pe + '&orgUnit=' + newDxArr[i].ou + '&dataSet=' + newDxArr[i].dataset + '&filter=dataElement:' + newDxArr[i].dx + '');
 			var jData = JSON.parse($.ajax({url:apiData, async: false}).responseText);
+			
+			console.log(apiData);
 
 			if (jData.dataValues){
 
@@ -504,25 +533,30 @@
 
 						if (jData.dataValues[p]['dataElement'] == DxArr[n]){
 
-							iEndNoteIncr += 1;
+							/* We're no longer ALWAYS outputting all programme levels/structures */
+							if ( document.getElementById(jData.dataValues[p]['dataElement']) ){
 
-							document.getElementById(jData.dataValues[p]['dataElement']).style.textAlign = 'center';
-							document.getElementById(jData.dataValues[p]['dataElement']).style.padding = '2px 6px 2px 2px';
+								iEndNoteIncr += 1;
 
-							var EndNote = document.createElement('a');
-							EndNote.setAttribute("width", 20);
-							EndNote.setAttribute("height", 10);		
-							EndNote.width = 20;
-							EndNote.height = 10;
-							EndNote.setAttribute("style", "font-size:11px;font-weight:200;opacity:1;cursor:hand;cursor:pointer;");
-							EndNote.setAttribute("fill", "#0048FF");
-							EndNote.setAttribute("title", (DxArr[n] + ': ' + jData.dataValues[p]['value']));
-							EndNote.setAttribute("href", "#endnote_" + jData.dataValues[p]['value']);
-							EndNote.setAttribute("file_resource", jData.dataValues[p]['value']);
-							EndNote.setAttribute("file_ou", newDxArr[i].ou);
-							EndNote.textContent = ''; //(((jData.dataValues[p]['value']).length) ? '1' : '');
+								document.getElementById(jData.dataValues[p]['dataElement']).style.textAlign = 'center';
+								document.getElementById(jData.dataValues[p]['dataElement']).style.padding = '2px 6px 2px 2px';
 
-							document.getElementById(jData.dataValues[p]['dataElement']).appendChild(EndNote);
+								var EndNote = document.createElement('a');
+								EndNote.setAttribute("width", 20);
+								EndNote.setAttribute("height", 10);		
+								EndNote.width = 20;
+								EndNote.height = 10;
+								EndNote.setAttribute("style", "font-size:11px;font-weight:200;opacity:1;cursor:hand;cursor:pointer;");
+								EndNote.setAttribute("fill", "#0048FF");
+								EndNote.setAttribute("title", (DxArr[n] + ': ' + jData.dataValues[p]['value']));
+								EndNote.setAttribute("href", "#endnote_" + jData.dataValues[p]['value']);
+								EndNote.setAttribute("file_resource", jData.dataValues[p]['value']);
+								EndNote.setAttribute("file_ou", newDxArr[i].ou);
+								EndNote.textContent = jData.dataValues[p]['value']; //(((jData.dataValues[p]['value']).length) ? '1' : '');
+
+								document.getElementById(jData.dataValues[p]['dataElement']).appendChild(EndNote);
+
+							}
 
 						}
 
@@ -547,11 +581,19 @@
 
 				for (i = 0; i < jData.rows.length; i++){
 					if (!isNaN(parseFloat(jData.rows[i][2])) && isFinite(jData.rows[i][2])){
-						document.getElementById(jData.rows[i][0]).style.textAlign = 'right';
-						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? formatNumber(jData.rows[i][2]).replace('.0','') : '');
-						document.getElementById(jData.rows[i][0]).style.padding = '2px 6px 2px 2px';
+
+						/* We're no longer ALWAYS outputting all programme levels/structures */
+						if ( document.getElementById(jData.rows[i][0]) ){
+
+							document.getElementById(jData.rows[i][0]).style.textAlign = 'right';
+							document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2]) ? formatNumber(jData.rows[i][2]).replace('.0','') : '');
+							document.getElementById(jData.rows[i][0]).style.padding = '2px 6px 2px 2px';
+
+						}
 					} else {
-						document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2] != 'NaN') ? jData.rows[i][2] : '');
+						if ( document.getElementById(jData.rows[i][0]) ){
+							document.getElementById(jData.rows[i][0]).innerText = ((jData.rows[i][2] != 'NaN') ? jData.rows[i][2] : '');
+						}
 					}
 				}
 
