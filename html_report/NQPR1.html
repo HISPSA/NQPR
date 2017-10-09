@@ -90,10 +90,10 @@
 			&nbsp;Quarterly Target <br>as per APP
 		</td>
 		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
-			Quarter Output <br>- Preliminary
+			Final/Actual Output  <br>- Previous Quarter
 		</td>
 		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
-			Quarter Output <br>- Validated
+			Output - Preliminary <br>- Current Quarter
 		</td>
 		<td style='font-weight:800;text-align:center;border-left:1pt solid black;border-bottom:1pt solid black;padding:2px;'>
 			Deviation <br>(Actual)
@@ -639,6 +639,16 @@
 				Td.innerHTML = '&nbsp;';
 				Tr.appendChild(Td);
 
+				/* Valid Output */
+
+				var Td = document.createElement('td');
+				Td.setAttribute("colspan",1);
+				Td.setAttribute("id",dxRows[i].dxOutputValid);
+				Td.setAttribute("title",dxRows[i].dxOutputValid);
+				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
+				Td.innerHTML = '&nbsp;';
+				Tr.appendChild(Td);
+
 				/* Prelim Output */
 
 				var Td = document.createElement('td');
@@ -649,15 +659,6 @@
 				Td.innerHTML = '&nbsp;';
 				Tr.appendChild(Td);
 
-				/* Valid Output */
-
-				var Td = document.createElement('td');
-				Td.setAttribute("colspan",1);
-				Td.setAttribute("id",dxRows[i].dxOutputValid);
-				Td.setAttribute("title",dxRows[i].dxOutputValid);
-				Td.setAttribute("style",'vertical-align:top;font-weight:400;font-size:11px;background-Color:#ffffff;border-left:1pt solid black;border-bottom:1pt solid black;padding:3px;max-width:125px;');
-				Td.innerHTML = '&nbsp;';
-				Tr.appendChild(Td);
 
 				/* Actual Dev */
 
